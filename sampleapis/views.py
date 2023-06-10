@@ -1,4 +1,5 @@
 import json
+import configparser
 
 from django.shortcuts import render
 
@@ -7,14 +8,17 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 
 
+config=configparser.ConfigParser()
+config.read('config.ini')
+
+
 @api_view(['GET', 'TRACE'])
 def index(request):
     if request.method == 'GET':
         return HttpResponse("WELCOME !!")
     elif request.method == 'TRACE':
         response = HttpResponse("WELCOME !!", status=200)
-        response[
-            'Custom_Header_Name'] = 'Custom_Header_Value'  # here we can add the custom header which will be used in validating the test
+        response['Custom_Header_Name'] = 'Custom_Header_Value'  # here we can add the custom header which will be used in validating the test
         return response
     else:
         return HttpResponse("Method not allowed", status=405)
@@ -42,3 +46,12 @@ def serverversion(request):
 @api_view(['GET'])
 def echo(request):
     return HttpResponse(json.dumps(request.data), status=200)
+
+
+@api_view(['GET'])
+def useconfig(request):
+    response = HttpResponse("WELCOME !!")
+    custom_header_name = config.get('CustomHeader', 'Name')
+    custom_header_value = config.get('CustomHeader', 'Value')
+    response[custom_header_name] = custom_header_value
+    return response
