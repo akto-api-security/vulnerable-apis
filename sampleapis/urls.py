@@ -5,8 +5,8 @@ from . import views
 urlpatterns = [
     path("", views.index, name="index"),
     path("echo/", views.echo, name="echo"),
-    path("trace/", views.trace, name="trace"),
-    path("track/", views.track, name="track"),
-    path("serverversion/", views.serverversion, name="serverversion"),
+    path("trace/", views.trace_method_test, name="trace_method_test"),
+    path("track/", views.track_method_test, name="track_method_test"),
+    path("serverversion/", views.server_version_disclosure_test, name="server_version_disclosure_test"),
 ]
 

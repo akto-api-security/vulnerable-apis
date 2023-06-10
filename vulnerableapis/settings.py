@@ -47,6 +47,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'vulnerableapis.remove_server_info_middleware.Remove_Server_Info_Middleware',
 ]
 
 ROOT_URLCONF = 'vulnerableapis.urls'
