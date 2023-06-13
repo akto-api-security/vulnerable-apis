@@ -1,0 +1,35 @@
+{
+    "notices": [
+      {
+        "id": 1,
+        "title": "Examination Schedule",
+        "date": "2023-06-15",
+        "content": "The final examination schedule for the current semester is now available. Please check the college website for more details."
+      },
+      {
+        "id": 2,
+        "title": "Library Closure",
+        "date": "2023-06-17",
+        "content": "Due to maintenance work, the college library will remain closed on June 17th. Apologies for the inconvenience caused."
+      },
+      {
+        "id": 3,
+        "title": "Guest Lecture on Artificial Intelligence",
+        "date": "2023-06-20",
+        "content": "A guest lecture on Artificial Intelligence will be held on June 20th at the college auditorium. All interested students are requested to attend."
+      },
+      {
+        "id": 4,
+        "title": "Sports Day Announcement",
+        "date": "2023-06-25",
+        "content": "The annual Sports Day will take place on June 25th. Students can participate in various sports events. Register at the college sports office."
+      },
+      {
+        "id": 5,
+        "title": "Internship Opportunities",
+        "date": "2023-06-28",
+        "content": "Several companies are offering summer internships for college students. Visit the career services office for more information and to apply."
+      }
+    ]
+  }
+  

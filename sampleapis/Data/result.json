@@ -1,0 +1,79 @@
+{
+    "name": "John Doe",
+    "enrollment_number": "1234567890",
+    "results": [
+      {
+        "semester": 1,
+        "year": 2019,
+        "courses": [
+          {
+            "code": "CS101",
+            "name": "Introduction to Computer Science",
+            "grade": "A",
+            "credits": 3
+          },
+          {
+            "code": "MATH101",
+            "name": "Calculus",
+            "grade": "B+",
+            "credits": 4
+          },
+          {
+            "code": "ENG101",
+            "name": "English Composition",
+            "grade": "A-",
+            "credits": 3
+          }
+        ]
+      },
+      {
+        "semester": 2,
+        "year": 2019,
+        "courses": [
+          {
+            "code": "CS201",
+            "name": "Data Structures",
+            "grade": "A",
+            "credits": 3
+          },
+          {
+            "code": "MATH202",
+            "name": "Discrete Mathematics",
+            "grade": "A",
+            "credits": 4
+          },
+          {
+            "code": "PHY101",
+            "name": "Physics",
+            "grade": "B",
+            "credits": 3
+          }
+        ]
+      },
+      {
+        "semester": 3,
+        "year": 2020,
+        "courses": [
+          {
+            "code": "CS301",
+            "name": "Algorithms",
+            "grade": "A+",
+            "credits": 3
+          },
+          {
+            "code": "DB101",
+            "name": "Database Management",
+            "grade": "A-",
+            "credits": 4
+          },
+          {
+            "code": "ENG201",
+            "name": "Technical Writing",
+            "grade": "A",
+            "credits": 3
+          }
+        ]
+      }
+    ]
+  }
+  

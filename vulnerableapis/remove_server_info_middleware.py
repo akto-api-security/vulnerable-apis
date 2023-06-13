@@ -3,7 +3,7 @@ class Remove_Server_Info_Middleware:
         self.get_response=get_response
     
     def __call__(self, request):
-        if request.path == '/sampleapis/serverversion/':
+        if request.path == '/sampleapis/academics/results/':
             response=self.get_response(request)
         elif request.method == 'TRACE' or request.method == 'TRACK':
             response=self.get_response(request)

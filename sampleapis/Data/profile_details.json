@@ -1,0 +1,29 @@
+{
+    "id": "123456",
+    "name": "John Doe",
+    "age": 20,
+    "gender": "Male",
+    "email": "johndoe@example.com",
+    "college": "ABC University",
+    "major": "Computer Science",
+    "year": 3,
+    "enrollment_number": "1234567890",
+    "courses": [
+      {
+        "code": "CS101",
+        "name": "Introduction to Computer Science",
+        "credits": 3
+      },
+      {
+        "code": "MATH202",
+        "name": "Discrete Mathematics",
+        "credits": 3
+      },
+      {
+        "code": "ENG101",
+        "name": "English Composition",
+        "credits": 3
+      }
+    ]
+  }
+  

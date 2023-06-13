@@ -1,0 +1,15 @@
+{
+    "name": "John Doe",
+    "enrollment_number": "1234567890",
+    "semester": 3,
+    "year": 2022,
+    "attendance": {
+      "January": 95,
+      "February": 92,
+      "March": 90,
+      "April": 96,
+      "May": 94,
+      "June": 97
+    }
+  }
+  

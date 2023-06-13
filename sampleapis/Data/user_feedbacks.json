@@ -1,0 +1,82 @@
+{
+    "feedbacks": [
+      {
+        "id": 1,
+        "name": "John Doe",
+        "enrollment_number": "1234567890",
+        "email": "johndoe@example.com",
+        "message": "The college facilities are excellent. The library is well-stocked, and the professors are knowledgeable and supportive."
+      },
+      {
+        "id": 2,
+        "name": "Jane Smith",
+        "enrollment_number": "0987654321",
+        "email": "janesmith@example.com",
+        "message": "I appreciate the interactive teaching methods used by the faculty. It helps in better understanding of the subjects."
+      },
+      {
+        "id": 3,
+        "name": "Mark Johnson",
+        "enrollment_number": "4567890123",
+        "email": "markjohnson@example.com",
+        "message": "The college events and extracurricular activities are well-organized and provide great opportunities for students to showcase their talents."
+      },
+      {
+        "id": 4,
+        "name": "Sarah Davis",
+        "enrollment_number": "5432109876",
+        "email": "sarahdavis@example.com",
+        "message": "The college faculty is highly knowledgeable and passionate about their subjects. They create a conducive learning environment."
+      },
+      {
+        "id": 5,
+        "name": "Michael Wilson",
+        "enrollment_number": "6789054321",
+        "email": "michaelwilson@example.com",
+        "message": "The college infrastructure is impressive, and the labs are well-equipped with the latest technology."
+      },
+      {
+        "id": 6,
+        "name": "Emily Brown",
+        "enrollment_number": "8901234567",
+        "email": "emilybrown@example.com",
+        "message": "The college provides ample opportunities for internships and practical experience, which is beneficial for career growth."
+      },
+      {
+        "id": 7,
+        "name": "Daniel Martinez",
+        "enrollment_number": "2345678901",
+        "email": "danielmartinez@example.com",
+        "message": "The college administration is efficient and always ready to address student concerns and queries."
+      },
+      {
+        "id": 8,
+        "name": "Olivia Thompson",
+        "enrollment_number": "7654321098",
+        "email": "oliviathompson@example.com",
+        "message": "The college encourages a diverse and inclusive environment, fostering cultural exchange and understanding."
+      },
+      {
+        "id": 9,
+        "name": "William Anderson",
+        "enrollment_number": "3210987654",
+        "email": "williamanderson@example.com",
+        "message": "The college provides ample research opportunities and encourages students to explore their academic interests."
+      },
+      {
+        "id": 10,
+        "name": "Sophia Garcia",
+        "enrollment_number": "6543210987",
+        "email": "sophiagarcia@example.com",
+        "message": "The college career services department is helpful in providing guidance and support for internships and job placements."
+      },
+      {
+        "id": 11,
+        "name": "Alexander Lee",
+        "enrollment_number": "4321098765",
+        "email": "alexanderlee@example.com",
+        "message": "The college library has a vast collection of resources and provides a quiet and conducive study environment."
+      }
+    ]
+  }
+  

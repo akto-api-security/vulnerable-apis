@@ -1,0 +1,110 @@
+{
+    "courses": [
+      {
+        "code": "CS101",
+        "name": "Introduction to Computer Science",
+        "credits": 3
+      },
+      {
+        "code": "MATH101",
+        "name": "Calculus",
+        "credits": 4
+      },
+      {
+        "code": "ENG101",
+        "name": "English Composition",
+        "credits": 3
+      },
+      {
+        "code": "CS201",
+        "name": "Data Structures",
+        "credits": 3
+      },
+      {
+        "code": "MATH202",
+        "name": "Discrete Mathematics",
+        "credits": 4
+      },
+      {
+        "code": "PHY101",
+        "name": "Physics",
+        "credits": 3
+      },
+      {
+        "code": "CS301",
+        "name": "Algorithms",
+        "credits": 3
+      },
+      {
+        "code": "DB101",
+        "name": "Database Management",
+        "credits": 4
+      },
+      {
+        "code": "ENG201",
+        "name": "Technical Writing",
+        "credits": 3
+      },
+      {
+        "code": "CHEM101",
+        "name": "Chemistry",
+        "credits": 3
+      },
+      {
+        "code": "ART202",
+        "name": "Art History",
+        "credits": 3
+      },
+      {
+        "code": "ECO201",
+        "name": "Microeconomics",
+        "credits": 3
+      },
+      {
+        "code": "STAT101",
+        "name": "Statistics",
+        "credits": 3
+      },
+      {
+        "code": "HIST201",
+        "name": "World History",
+        "credits": 3
+      },
+      {
+        "code": "CS401",
+        "name": "Operating Systems",
+        "credits": 4
+      },
+      {
+        "code": "PSYCH101",
+        "name": "Introduction to Psychology",
+        "credits": 3
+      },
+      {
+        "code": "BUS201",
+        "name": "Business Ethics",
+        "credits": 3
+      },
+      {
+        "code": "SOC101",
+        "name": "Introduction to Sociology",
+        "credits": 3
+      },
+      {
+        "code": "ENG301",
+        "name": "Advanced Writing",
+        "credits": 3
+      },
+      {
+        "code": "ECON301",
+        "name": "Macroeconomics",
+        "credits": 3
+      },
+      {
+        "code": "CS501",
+        "name": "Artificial Intelligence",
+        "credits": 4
+      }
+    ]
+  }
+  
