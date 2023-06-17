@@ -13,5 +13,8 @@ urlpatterns = [
     path("academics/courses/v1/registration/payment/", views.payment_v1, name="registration"),
     path("academics/courses/v2/registration/payment/", views.payment_v2, name="registration"), #Old Api Version Vulnerability
     path("dashboard/attendence/", views.getAttendence, name="profile-details"), #Content Type Header Missing Vulnerability
+    path("profile/edit-details/upload-transcript/", views.upload_transcript, name="upload_transcript"), #SSRF on CSV upload
+    path("profile/edit-details/upload-profile-image/", views.upload_profile_pic, name="upload_profile_pic"),
+    path("profile/edit-details/upload-resume/", views.upload_resume, name="upload_resume"),
 ]
 
