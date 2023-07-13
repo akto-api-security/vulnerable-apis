@@ -3,19 +3,69 @@ import time
 import uuid
 import csv
 import requests
-
 from django.shortcuts import render
 from django.shortcuts import redirect
-
 from django.http import HttpResponse
 from django.http import JsonResponse
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
+from .models import UserProfile
+from .models import CardDetail
+from .models import student,Result
+from django.db import connection
+from .database import db
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 @api_view(['GET'])
 def index(request):
-    return HttpResponse("WELCOME !!", status=200)
+    return render(request, 'index.html')
 
+@api_view(['POST'])
+def user_signUp(request):
+    username = request.data.get('username')
+    password = request.data.get('password')
+    email = request.data.get('email')
+    first_name = request.data.get('first_name')
+    last_name = request.data.get('last_name')
+
+    if not username or not password:
+        return Response({'error': 'Please provide username and password'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        user = User.objects.create_user(username=username, email=email, first_name=first_name, last_name=last_name, password=password)
+        user_profile = UserProfile(user=user, email=email, username=username, name=f"{first_name} {last_name}")
+        user_profile.save() 
+        full_name = f"{user.first_name} {user.last_name}"
+        return Response({'success': 'User created successfully', 'id': user.id, 'username': user.username, 'full_name': full_name, 'email': user.email}, status=status.HTTP_201_CREATED)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['POST'])
+def user_signIn(request):
+    username = request.data.get('username')
+    password = request.data.get('password')
+
+    if not username or not password:
+        return Response({'error': 'Please provide both username and password'}, status=status.HTTP_400_BAD_REQUEST)
+
+    user = authenticate(request, username=username, password=password)
+
+    if user is None:
+        return Response({'error': 'Invalid username or password'}, status=status.HTTP_401_UNAUTHORIZED)
+
+    login(request, user)
+
+    refresh = RefreshToken.for_user(user)
+    token = str(refresh.access_token)
+
+    return Response({'username': str(username), 'refresh': str(refresh), 'access': token}, status=status.HTTP_200_OK)
 
 def fetch_file(file):
     with open(file, 'r') as json_file:
@@ -77,6 +127,8 @@ def fetch_course_list_from_file(limit):
 # old api version test
 #version-1 
 @api_view(['GET', 'POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def payment_v1(request):
     payment_id = str(uuid.uuid4())
     payment_data = {
@@ -90,6 +142,8 @@ def payment_v1(request):
 
 #version-2
 @api_view(['GET', 'POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def payment_v2(request):
     payment_id = str(uuid.uuid4())
     payment_data = {
@@ -351,3 +405,301 @@ def getDocuments(request):
 @api_view(['GET'])
 def echo(request):
     return HttpResponse(json.dumps(request.data), status=200)
+
+@api_view(['PUT'])
+def update_email(request, user_id):
+    try:
+        user = User.objects.get(id=user_id)
+        new_email = request.data.get('email')
+        user.email = new_email
+        user.save()
+        user_profile = UserProfile.objects.get(user=user)
+        user_profile.email = new_email
+        user_profile.save()
+
+        return Response({'success': 'Email updated successfully'}, status=200)
+    except User.DoesNotExist:
+        return Response({'error': 'User not found'}, status=404)
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
+
+@api_view(['PUT'])
+def update_phone_number(request, user_id):
+    try:
+        user = User.objects.get(id=user_id)
+        new_phone_number = request.data.get('phone_number')
+        user_profile = UserProfile.objects.get(user=user)
+        user_profile.phone_number = new_phone_number
+        user_profile.save()
+
+        return Response({'success': 'Phone number updated successfully'}, status=200)
+    except User.DoesNotExist:
+        return Response({'error': 'User not found'}, status=404)
+    except UserProfile.DoesNotExist:
+        return Response({'error': 'User profile not found'}, status=404)
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
+
+@api_view(['PUT'])
+def change_username(request, user_id):
+    try:
+        user = User.objects.get(id=user_id)
+        new_username = request.data.get('username')
+        if User.objects.filter(username=new_username).exists():
+            return Response({'error': 'Username is already taken'}, status=400)
+        user.username = new_username
+        user.save()
+        user_profile = UserProfile.objects.get(user=user)
+        user_profile.username = new_username
+        user_profile.save()
+
+        return Response({'success': 'Username changed successfully'}, status=200)
+    except User.DoesNotExist:
+        return Response({'error': 'User not found'}, status=404)
+    except UserProfile.DoesNotExist:
+        return Response({'error': 'User profile not found'}, status=404)
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
+
+@api_view(['PUT'])
+def edit_user_profile(request, user_id):
+    try:
+        user = User.objects.get(id=user_id)
+        user_profile = UserProfile.objects.get(user=user)
+        user_profile.bio = request.data.get('bio', user_profile.bio)
+        user_profile.roll_number = request.data.get('roll_number', user_profile.roll_number)
+        user_profile.date_of_birth = request.data.get('date_of_birth', user_profile.date_of_birth)
+        user_profile.departement = request.data.get('departement', user_profile.departement)
+        user_profile.address = request.data.get('address', user_profile.address)
+        user_profile.save()
+
+        return Response({'success': 'User profile updated successfully'}, status=200)
+    except User.DoesNotExist:
+        return Response({'error': 'User not found'}, status=404)
+    except UserProfile.DoesNotExist:
+        return Response({'error': 'User profile not found'}, status=404)
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
+
+@api_view(['DELETE'])
+def delete_user(request, user_id):
+    try:
+        user = User.objects.get(id=user_id)
+        user.delete()
+        return Response({'success': 'User account deleted successfully'})
+    except User.DoesNotExist:
+        return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['POST'])
+def add_card(request, user_id):
+    card_number = request.data.get('card_number')
+    card_holder_name = request.data.get('card_holder_name')
+    card_expiry_date = request.data.get('card_expiry_date')
+    card_type = request.data.get('card_type')
+    payment_network = request.data.get('payment_network')
+
+    try:
+        user = User.objects.get(id=user_id)
+        existing_card = CardDetail.objects.filter(user=user, card_number=card_number).first()
+        if existing_card:
+            return Response({'error': 'Card details already exist for this user'}, status=status.HTTP_400_BAD_REQUEST)
+        card_detail = CardDetail.objects.create(user=user, card_number=card_number, card_holder_name=card_holder_name, card_expiry_date=card_expiry_date, card_type=card_type, payment_network=payment_network)
+        return Response({'message': 'Card detail added successfully'}, status=status.HTTP_201_CREATED)
+    except User.DoesNotExist:
+        return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+# @api_view(['GET'])
+# def get_card_details(request, user_id):
+#     try:
+#         # user = User.objects.get(id=user_id)
+#         # card_details = CardDetail.objects.filter(user=user)
+#         with connection.cursor() as cursor:
+#             cursor.execute("""
+#                 SELECT
+#                     card_number,
+#                     card_holder_name,
+#                     card_expiry_date,
+#                     card_type,
+#                     payment_network
+#                 FROM
+#                     sampleapis_carddetail
+#                 WHERE
+#                     user_id = %s
+#             """, [user_id])
+#             card_details = cursor.fetchall()
+#         card_data = []
+#         for card in card_details:
+#             card_data.append({
+#                 'card_number': card.card_number,
+#                 'card_holder_name': card.card_holder_name,
+#                 'card_expiry_date': card.card_expiry_date,
+#                 'card_type': card.card_type,
+#                 'payment_network': card.payment_network
+#             })
+
+#         return Response({'card_details': card_data}, status=status.HTTP_200_OK)
+#     except User.DoesNotExist:
+#         return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+#     except Exception as e:
+#         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['GET'])
+def get_card_details(request, user_id):
+    try:
+        with connection.cursor() as cursor:
+            query = """
+                SELECT
+                    card_number,
+                    card_holder_name,
+                    card_expiry_date,
+                    card_type,
+                    payment_network
+                FROM
+                    sampleapis_carddetail
+                WHERE
+                    user_id = '{}'
+            """.format(user_id)
+            cursor.execute(query)
+            card_details = cursor.fetchall()
+
+        card_data = []
+        for card in card_details:
+            card_data.append({
+                'card_number': card[0],
+                'card_holder_name': card[1],
+                'card_expiry_date': card[2],
+                'card_type': card[3],
+                'payment_network': card[4]
+            })
+
+        return Response({'card_details': card_data}, status=status.HTTP_200_OK)
+    except User.DoesNotExist:
+        return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+@api_view(['GET', 'POST'])
+def open_library(request):
+    forwarded_host = request.META.get('HTTP_X_FORWARDED_HOST')
+    real_host = request.META.get('HTTP_X_REAL_HOST')
+    origin_host = request.META.get('HTTP_X_ORIGIN_HOST')
+    host_override = request.META.get('HTTP_X_HOST_OVERRIDE')
+    forwarded_server = request.META.get('HTTP_X_FORWARDED_SERVER')
+    proxy_host = request.META.get('HTTP_X_PROXY_HOST')
+    url = request.GET.get('url')
+
+    if any([forwarded_host, real_host, origin_host, host_override, forwarded_server, proxy_host]):
+        host = forwarded_host or real_host or origin_host or host_override or forwarded_server or proxy_host
+        new_location = f"https://{host}/?url={url}"
+        response = HttpResponse()
+        response['Location'] = new_location
+        response.status_code = 302
+        return response
+    return HttpResponse('welcome!!')
+
+@api_view(['GET'])
+def view_blog(request,url):
+    response = HttpResponse()
+    response['Location'] = url
+    response.status_code = 302
+    return response
+
+# @api_view(['GET'])
+# def abbc(request):
+#     url = request.GET.get('url')
+#     response = HttpResponse()
+#     response['Location'] = url
+#     response.status_code = 302
+#     return response
+
+@api_view(['POST'])
+def add_student(request):
+    name = request.data.get('name')
+    roll_no = request.data.get('roll_no')
+    departement = request.data.get('departement')
+    batch = request.data.get('batch')
+
+    if name is None or roll_no is None:
+        return Response({'error': 'Missing required fields'}, status=400)
+    
+    try:
+        existing_student = student.objects.using('mongo').get(roll_no=roll_no)
+        return Response({'error': 'Student with the same roll number already exists'}, status=400)
+    except student.DoesNotExist:
+        pass
+
+    new_student = student(name=name, roll_no=roll_no, departement=departement, batch=batch)
+    new_student.save(using='mongo')
+
+    return Response({'message': 'Student added successfully'}, status=201)
+
+
+@api_view(['POST'])
+def add_result(request):
+    roll_no = request.data.get('roll_no')
+    subject1 = request.data.get('subject1')
+    subject2 = request.data.get('subject2')
+    subject3 = request.data.get('subject3')
+    subject4 = request.data.get('subject4')
+    subject5 = request.data.get('subject5')
+    subject6 = request.data.get('subject6')
+
+    try:
+        user = student.objects.using('mongo').get(roll_no=roll_no)
+    except student.DoesNotExist:
+        return JsonResponse({'error': 'Student does not exist'})
+
+    result_count = Result.objects.using('mongo').filter(user=user).count()
+    if result_count > 0:
+        return JsonResponse({'error': 'Result already exists for the user'})
+
+    new_result = Result(user=user, subject1=subject1, subject2=subject2, subject3=subject3, subject4=subject4, subject5=subject5, subject6=subject6)
+    new_result.save(using='mongo')
+
+    return JsonResponse({'success': 'Result added successfully'})
+
+# @api_view(['GET'])
+# def get_student(request, roll_no):
+#     try:
+#         student = student.objects.using('mongo').get(roll_no=roll_no)
+#         student_data = {
+#             'name': student.name,
+#             'roll_no': student.roll_no,
+#             'department': student.department,
+#             'batch': student.batch
+#         }
+#         return Response({'student': student_data}, status=status.HTTP_200_OK)
+#     except student.DoesNotExist:
+#         return Response({'error': 'Student not found'}, status=status.HTTP_404_NOT_FOUND)
+#     except Exception as e:
+#         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+def get_student(request):
+    try:
+        collection = db['STUDENTS_TABLE']
+        query = {'roll_no': request.data["roll_no"]}
+        items = list(collection.find(filter=query))
+
+        if items:
+            student_data = []
+            for item in items:
+                student_data.append({
+                    'name': item['name'],
+                    'roll_no': item['roll_no'],
+                    'departement': item['departement'],
+                    'batch': item['batch']
+                })
+            return Response({'student': student_data}, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'Student not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
