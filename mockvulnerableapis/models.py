@@ -3,7 +3,7 @@ from django.db import models
 
 
 class SampleData(models.Model):
-    url = models.CharField(max_length=100)
+    url = models.CharField(max_length=500)
     node_id = models.CharField(max_length=50, default="x1")
     data = models.TextField()
 
