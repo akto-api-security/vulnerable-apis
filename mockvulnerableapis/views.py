@@ -2,6 +2,7 @@ from django.shortcuts import render
 from .decorator import authorization_check
 import asyncio
 from asgiref.sync import async_to_sync
+from urllib.parse import quote
 import json
 import os
 import copy
@@ -32,7 +33,7 @@ async def resp_delay(api_resp, delay=0):
 @api_view(['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'TRACE', 'TRACK', 'TestMethod'])
 @authorization_check
 def fetch_sample_data(request):
-    url = request.path
+    url = quote(request.path) 
     node_id = request.headers.get('x-akto-node', "x1")
     print(url)
     try:
@@ -44,8 +45,10 @@ def fetch_sample_data(request):
         status_code = sample_data_json["statusCode"]
         headers = sample_data_json["responseHeaders"]
         median_response_time = sample_data_json["medianResponseTime"]
-
-        api_resp = HttpResponse(json.dumps(resp), status=status_code)
+        if (type(resp) is str):
+            api_resp = HttpResponse(resp, status=status_code)
+        else:
+            api_resp = HttpResponse(json.dumps(resp), status=status_code)
 
         for key, value in headers.items():
             api_resp[key] = value
